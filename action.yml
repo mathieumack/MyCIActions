@@ -53,7 +53,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v2    
     # Show informations :
     - name: Show github context github ref
       run: echo ${{ inputs.githubRef }}
