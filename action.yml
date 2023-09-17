@@ -17,6 +17,11 @@ inputs:
     description: 'Who to greet'
     required: true
     default: 'World'
+  nugetApiKey:  # id of input
+    description: 'Who to greet'
+    required: true
+    secrets: true
+    default: 'World'
   sonarOrganizationCode:  # id of input
     description: 'Who to greet'
     required: true
@@ -36,15 +41,15 @@ inputs:
     description: 'Who to greet'
     required: true
     default: 'World'
-  nugetApiKey:  # id of input
+  githubToken:  # id of input
     description: 'Who to greet'
     required: true
-    secrets: true
     default: 'World'
 outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-number }}
+  BUILD_VERSION:
+    description: 'The time we greeted you'
+  BUILD_VERSION_PREFIX:
+    description: 'The time we greeted you'
 runs:
   using: "composite"
   steps:
@@ -95,7 +100,7 @@ runs:
     - name: End Sonar scan
       run: dotnet sonarscanner end /d:sonar.login=${{ inputs.sonarToken }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.githubToken }}
       working-directory: src
     - uses: actions/upload-artifact@v3
       with:
