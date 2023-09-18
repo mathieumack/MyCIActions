@@ -76,8 +76,8 @@ runs:
   - id: buildAndTest
     uses: buildandtestdotnet@v1.7
     with:
-      version: '${{ nugetVersion.outputs.buildVersion }}'
-      versionPrefix: '${{ nugetVersion.outputs.buildVersionPrefix }}'
+      version: '${{ steps.nugetVersion.outputs.buildVersion }}'
+      versionPrefix: '${{ steps.nugetVersion.outputs.buildVersionPrefix }}'
   - name: End Sonar scan
     shell: pwsh
     run: dotnet sonarscanner end /d:sonar.login=${{ inputs.sonarToken }}
