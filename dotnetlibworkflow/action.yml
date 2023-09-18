@@ -62,19 +62,10 @@ runs:
     run: dotnet restore
     working-directory: src
   # Generate package version :
-  - name: Generate package version
-    id: generateVersionStep
-    shell: pwsh
-    run: |
-      $version = .\nugetversion\scripts\generateVersion.ps1 -query ${{ inputs.nugetPackageIdentifier }}
-      echo "::set-output name=BUILD_VERSION::$version"
-    working-directory: ${{ github.action_path }}
-  - name: Generate package version prefix
-    id: generateVersionPrefixStep
-    shell: pwsh
-    run: |
-      if('${{ github.ref }}' -eq 'refs/heads/main') { echo "::set-output name=BUILD_VERSION_PREFIX::" }
-      else { echo "::set-output name=BUILD_VERSION_PREFIX::-preview-${{ github.run_number }}" }
+  - id: nugetVersion
+    uses: nugetversion@v1.7
+    with:
+      nugetPackageIdentifier: '${{ inputs.nugetPackageIdentifier }}'
   # Build solution (and package nuget) 
   - name: Begin Sonar scan
     shell: pwsh
@@ -82,14 +73,11 @@ runs:
       dotnet tool install --global dotnet-sonarscanner
       dotnet sonarscanner begin /k:${{ inputs.sonarOrganizationCode }}_${{ inputs.sonarProjectCode }} /o:${{ inputs.sonarOrganizationCode }} /d:sonar.login=${{ inputs.sonarToken }} /d:sonar.host.url=https://sonarcloud.io /d:sonar.cs.opencover.reportsPaths="sonarqubecoverage.opencover.xml"
     working-directory: src
-  - name: Build and analyze
-    shell: pwsh
-    run: |
-      dotnet build --configuration Release --no-restore -p:FileVersion=${{ steps.generateVersionStep.outputs.BUILD_VERSION }} /p:Version=${{ steps.generateVersionStep.outputs.BUILD_VERSION }}${{ steps.generateVersionPrefixStep.outputs.BUILD_VERSION_PREFIX }}
-    working-directory: src
-  #- name: Launch unit tests
-  #  run: dotnet test --configuration Release --no-build --verbosity normal /p:CollectCoverage=true  /p:CoverletOutputFormat=opencover --collect:"Code Coverage" /p:CoverletOutput="../sonarqubecoverage"
-  #  working-directory: src
+  - id: buildAndTest
+    uses: buildandtestdotnet@v1.7
+    with:
+      version: '${{ nugetVersion.outputs.buildVersion }}'
+      versionPrefix: '${{ nugetVersion.outputs.buildVersionPrefix }}'
   - name: End Sonar scan
     shell: pwsh
     run: dotnet sonarscanner end /d:sonar.login=${{ inputs.sonarToken }}

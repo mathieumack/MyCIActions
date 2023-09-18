@@ -32,4 +32,4 @@ runs:
     shell: pwsh
     run: |
       if('${{ github.ref }}' -eq 'refs/heads/main') { echo "buildPrefix=BUILD_VERSION_PREFIX" >> $GITHUB_OUTPUT }
-      else { echo "buildPrefix=-preview-${{ inputs.githubRunNumber }}" >> $GITHUB_OUTPUT }
+      else { echo "buildPrefix=-preview-${{ github.run_number }}" >> $GITHUB_OUTPUT }
