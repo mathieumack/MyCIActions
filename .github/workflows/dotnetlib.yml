@@ -10,7 +10,6 @@ on:
           type: boolean
         sourceDirectoryPath:
           description: 'Path for all source code'
-          required: true
           default: 'src'
           type: string
     secrets:
