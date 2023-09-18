@@ -29,10 +29,7 @@ jobs:
     - name: Checkout workflows repo # required so we can reference the actions locally
       uses: actions/checkout@v2
       with:
-        ref: main
         path: workflows
-        repository: mathieumack/MyCIActions
-        token: ${{ secrets.GH_ACCESSTOKEN }}
     # Show informations :
     - name: Show github context github ref
       run: echo ${{ github.ref }}
