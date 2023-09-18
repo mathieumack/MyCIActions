@@ -33,8 +33,6 @@ jobs:
     steps:
     - name: Checkout workflows repo # required so we can reference the actions locally
       uses: actions/checkout@v2
-      with:
-        path: workflows
     # Show informations :
     - name: Show github context github ref
       run: echo ${{ github.ref }}
@@ -50,7 +48,7 @@ jobs:
       run: dotnet restore
       working-directory: ${{ inputs.sourceDirectryPath }}
     - id: generateVersionStep
-      uses: ./actions/nugetversion
+      uses: mathieumack/MyCIActions/actions/nugetversion@main
       with:
         nugetPackageIdentifier: '${{ secrets.NUGETPACKAGEIDENTIFIER }}'
     # Build solution (and package nuget) 
