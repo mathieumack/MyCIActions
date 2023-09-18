@@ -42,7 +42,7 @@ jobs:
       run: dotnet restore
       working-directory: src
     - id: generateVersionStep
-      uses: mathieumack/MyCIActions/nugetversion@main
+      uses: ./actions/nugetversion
       with:
         nugetPackageIdentifier: '${{ secrets.NUGETPACKAGEIDENTIFIER }}'
     # Build solution (and package nuget) 
