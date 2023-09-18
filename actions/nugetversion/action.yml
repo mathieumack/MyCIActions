@@ -25,15 +25,7 @@ runs:
     shell: pwsh
     run: |
       $version = .\scripts\generateVersion.ps1 -query ${{ inputs.nugetPackageIdentifier }}
-      {
-        "buildVersion=$version"
-      } >> $GITHUB_OUTPUT
-      {
-        echo "### Build version"
-        echo "| Variable   | Value       |"
-        echo "| ---------- | ----------- |"
-        echo "| buildVersion  | $buildVersion  |"
-      } >> $GITHUB_STEP_SUMMARY
+      echo "::set-output name=buildVersion::$version"
     working-directory: ${{ github.action_path }}
   - name: Generate package version prefix
     id: generateVersionPrefixStep
@@ -47,15 +39,7 @@ runs:
       else { 
         $versionPrefix = "-preview-${{ github.run_number }}" 
       }
-      {
-        "buildVersionPrefix=$versionPrefix"
-      } >> $GITHUB_OUTPUT
-      {
-        echo "### Build version"
-        echo "| Variable   | Value       |"
-        echo "| ---------- | ----------- |"
-        echo "| buildVersionPrefix  | $buildVersionPrefix  |"
-      } >> $GITHUB_STEP_SUMMARY
+      echo "::set-output name=buildVersionPrefix::$versionPrefix"
   - name: Show build version
     shell: pwsh
     run: echo ${{ steps.generateVersionStep.outputs.buildVersion }}
