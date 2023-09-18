@@ -41,20 +41,10 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
       working-directory: src
-    # Generate package version :
-    - name: Generate package version
-      id: generateVersionStep
-      shell: pwsh
-      run: |
-        $version = .\scripts\generateVersion.ps1 -query ${{ secrets.nugetPackageIdentifier }}
-        echo "buildVersion=$version" >> $GITHUB_OUTPUT
-        working-directory: ${{ github.action_path }}
-    - name: Generate package version prefix
-      id: generateVersionPrefixStep
-      shell: pwsh
-      run: |
-        if('${{ github.ref }}' -eq 'refs/heads/main') { echo "buildPrefix=BUILD_VERSION_PREFIX" >> $GITHUB_OUTPUT }
-        else { echo "buildPrefix=-preview-${{ github.run_number }}" >> $GITHUB_OUTPUT }
+    - id: generateVersionStep
+      uses: mathieumack/MyCIActions/nugetversion@main
+      with:
+        nugetPackageIdentifier: '${{ secrets.NUGETPACKAGEIDENTIFIER }}'
     # Build solution (and package nuget) 
     - name: Begin Sonar scan
       run: |
