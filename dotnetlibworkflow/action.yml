@@ -63,7 +63,7 @@ runs:
     working-directory: src
   # Generate package version :
   - id: nugetVersion
-    uses: nugetversion@v1.7
+    uses: ./nugetversion
     with:
       nugetPackageIdentifier: '${{ inputs.nugetPackageIdentifier }}'
   # Build solution (and package nuget) 
@@ -74,7 +74,7 @@ runs:
       dotnet sonarscanner begin /k:${{ inputs.sonarOrganizationCode }}_${{ inputs.sonarProjectCode }} /o:${{ inputs.sonarOrganizationCode }} /d:sonar.login=${{ inputs.sonarToken }} /d:sonar.host.url=https://sonarcloud.io /d:sonar.cs.opencover.reportsPaths="sonarqubecoverage.opencover.xml"
     working-directory: src
   - id: buildAndTest
-    uses: buildandtestdotnet@v1.7
+    uses: ./buildandtestdotnet
     with:
       version: '${{ steps.nugetVersion.outputs.buildVersion }}'
       versionPrefix: '${{ steps.nugetVersion.outputs.buildVersionPrefix }}'
