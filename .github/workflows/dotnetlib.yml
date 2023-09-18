@@ -11,8 +11,8 @@ on:
         sourceDirectoryPath:
           description: 'Path for all source code'
           required: true
-          default: true
-          type: boolean
+          default: 'src'
+          type: string
     secrets:
         NUGETPACKAGEIDENTIFIER:
             required: true
