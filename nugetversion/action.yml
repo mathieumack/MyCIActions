@@ -33,9 +33,9 @@ runs:
     run: |
       if('${{ github.ref }}' -eq 'refs/heads/main') { echo "buildVersionPrefix=" >> $GITHUB_OUTPUT }
       else { echo "buildVersionPrefix=-preview-${{ github.run_number }}" >> $GITHUB_OUTPUT }
-    - name: Show build version
-      shell: pwsh
-      run: echo ${{ steps.generateVersionStep.outputs.buildVersion }}
-    - name: Show build version prefix
-      shell: pwsh
-      run: echo ${{ steps.generateVersionPrefixStep.outputs.buildVersionPrefix }}
+  - name: Show build version
+    shell: pwsh
+    run: echo ${{ steps.generateVersionStep.outputs.buildVersion }}
+  - name: Show build version prefix
+    shell: pwsh
+    run: echo ${{ steps.generateVersionPrefixStep.outputs.buildVersionPrefix }}
