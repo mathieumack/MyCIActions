@@ -57,9 +57,18 @@ runs:
   - name: Show github context github ref
     shell: bash
     run: echo ${{ inputs.githubRef }}
+  - name: Show github context github ref
+    shell: bash
+    run: echo ${{ github.ref }}
   - name: Show github context github head_ref
     shell: bash
     run: echo ${{ inputs.githubHeadRef }}
+  - name: Show github context github run number
+    shell: bash
+    run: echo ${{ github.run_number }}
+  - name: Show github context github head_ref
+    shell: bash
+    run: echo ${{ github.head_ref }}
   - name: Setup .NET
     uses: actions/setup-dotnet@v1
     with:
@@ -75,8 +84,9 @@ runs:
     id: generateVersionStep
     shell: pwsh
     run: |
-      $version = .\nugetversion\scripts\generateVersion.ps1 -query ${{ inputs.nugetPackageIdentifier }}
+      $version = .\generateVersion.ps1 -query ${{ inputs.nugetPackageIdentifier }}
       echo "::set-output name=BUILD_VERSION::$version"
+    working-directory: .github/workflows/scripts
   - name: Generate package version prefix
     id: generateVersionPrefixStep
     shell: pwsh

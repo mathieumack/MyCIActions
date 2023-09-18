@@ -1,0 +1,33 @@
+name: 'Nuget package version'
+description: 'Find and generate the version of the nuget package to build'
+inputs:
+  nugetPackageIdentifier:  # id of input
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+outputs:
+  BUILD_VERSION:
+    description: 'The time we greeted you'
+  BUILD_VERSION_PREFIX:
+    description: 'The time we greeted you'
+runs:
+  using: "composite"
+  steps:
+  - name: Setup .NET
+    uses: actions/setup-dotnet@v1
+    with:
+      dotnet-version: |
+        7.0.x
+  - name: Generate package version
+    id: generateVersionStep
+    shell: pwsh
+    run: |
+      $version = .\scripts\generateVersion.ps1 -query ${{ inputs.nugetPackageIdentifier }}
+      echo "::set-output name=BUILD_VERSION::$version"
+    working-directory: scripts
+  - name: Generate package version prefix
+    id: generateVersionPrefixStep
+    shell: pwsh
+    run: |
+      if('${{ github.ref }}' -eq 'refs/heads/main') { echo "::set-output name=BUILD_VERSION_PREFIX::" }
+      else { echo "::set-output name=BUILD_VERSION_PREFIX::-preview-${{ inputs.githubRunNumber }}" }
