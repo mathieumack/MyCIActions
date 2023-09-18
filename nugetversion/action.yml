@@ -11,7 +11,7 @@ outputs:
     value: ${{ steps.generateVersionStep.outputs.buildVersion }}
   buildVersionPrefix:
     description: 'Generated build version prefix'
-    value: ${{ steps.generateVersionPrefixStep.outputs.buildPrefix }}
+    value: ${{ steps.generateVersionPrefixStep.outputs.buildVersionPrefix }}
 runs:
   using: "composite"
   steps:
