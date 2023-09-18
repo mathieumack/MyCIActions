@@ -1,18 +1,6 @@
 name: 'Nuget package'
 description: 'Build and Deploy a .net library on nuget'
 inputs:
-  githubRef:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
-  githubHeadRef:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
-  githubRunNumber:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
   nugetPackageIdentifier:  # id of input
     description: 'Who to greet'
     required: true
@@ -56,19 +44,13 @@ runs:
   # Show informations :
   - name: Show github context github ref
     shell: bash
-    run: echo ${{ inputs.githubRef }}
-  - name: Show github context github ref
+    run: echo Github Ref ${{ github.ref }}
+  - name: Show github context github head ref
     shell: bash
-    run: echo ${{ github.ref }}
-  - name: Show github context github head_ref
-    shell: bash
-    run: echo ${{ inputs.githubHeadRef }}
+    run: echo Github Head Ref ${{ github.head_ref }}
   - name: Show github context github run number
     shell: bash
-    run: echo ${{ inputs.githubRunNumber }}
-  - name: Show github context github run number
-    shell: bash
-    run: echo ${{ github.run_number }}
+    run: echo Github Run number ${{ github.run_number }}
   - name: Setup .NET
     uses: actions/setup-dotnet@v1
     with:
@@ -86,12 +68,13 @@ runs:
     run: |
       $version = .\nugetversion\scripts\generateVersion.ps1 -query ${{ inputs.nugetPackageIdentifier }}
       echo "::set-output name=BUILD_VERSION::$version"
+    working-directory: ${{ github.action_path }}
   - name: Generate package version prefix
     id: generateVersionPrefixStep
     shell: pwsh
     run: |
       if('${{ github.ref }}' -eq 'refs/heads/main') { echo "::set-output name=BUILD_VERSION_PREFIX::" }
-      else { echo "::set-output name=BUILD_VERSION_PREFIX::-preview-${{ inputs.githubRunNumber }}" }
+      else { echo "::set-output name=BUILD_VERSION_PREFIX::-preview-${{ github.run_number }}" }
   # Build solution (and package nuget) 
   - name: Begin Sonar scan
     shell: pwsh
@@ -120,6 +103,6 @@ runs:
   # Publish a new version only for new features :
   - name: Push Package to NuGet.org
     shell: pwsh
-    if: startswith(inputs.githubRef,'refs/heads/feature') || startswith(inputs.githubHeadRef,'feature/') || inputs.publishToNuget
+    if: startswith(github.ref,'refs/heads/feature') || startswith(github.head_ref,'feature/') || inputs.publishToNuget
     run: dotnet nuget push **.nupkg -k ${{ inputs.nugetApiKey }} -s https://api.nuget.org/v3/index.json
     working-directory: src
