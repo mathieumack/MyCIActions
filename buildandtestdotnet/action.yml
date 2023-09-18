@@ -65,10 +65,10 @@ runs:
     run: echo ${{ inputs.githubHeadRef }}
   - name: Show github context github run number
     shell: bash
-    run: echo ${{ github.run_number }}
-  - name: Show github context github head_ref
+    run: echo ${{ inputs.githubRunNumber }}
+  - name: Show github context github run number
     shell: bash
-    run: echo ${{ github.head_ref }}
+    run: echo ${{ github.run_number }}
   - name: Setup .NET
     uses: actions/setup-dotnet@v1
     with:
