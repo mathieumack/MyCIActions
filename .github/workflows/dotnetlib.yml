@@ -8,7 +8,7 @@ on:
           required: true
           default: true
           type: boolean
-        sourceDirectryPath:
+        sourceDirectoryPath:
           description: 'Path for all source code'
           required: true
           default: true
@@ -46,7 +46,7 @@ jobs:
           7.0.x
     - name: Restore dependencies
       run: dotnet restore
-      working-directory: ${{ inputs.sourceDirectryPath }}
+      working-directory: ${{ inputs.sourceDirectoryPath }}
     - id: generateVersionStep
       uses: mathieumack/MyCIActions/actions/nugetversion@main
       with:
@@ -56,12 +56,12 @@ jobs:
       run: |
         dotnet tool install --global dotnet-sonarscanner
         dotnet sonarscanner begin /k:${{ secrets.SONAR_ORGANIZATION_CODE }}_${{ secrets.SONAR_PROJECT_CODE }} /o:${{ secrets.SONAR_ORGANIZATION_CODE }} /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url=https://sonarcloud.io /d:sonar.cs.opencover.reportsPaths="sonarqubecoverage.opencover.xml"
-      working-directory: ${{ inputs.sourceDirectryPath }}
+      working-directory: ${{ inputs.sourceDirectoryPath }}
     - name: Build and analyze
       shell: pwsh
       run: |
-        dotnet build --configuration Release --no-restore -p:FileVersion=${{ steps.generateVersionStep.outputs.BUILD_VERSION }} /p:Version=${{ steps.generateVersionStep.outputs.BUILD_VERSION }}${{ steps.generateVersionPrefixStep.outputs.BUILD_VERSION_PREFIX }}
-      working-directory: ${{ inputs.sourceDirectryPath }}
+        dotnet build --configuration Release --no-restore -p:FileVersion=${{ steps.generateVersionStep.outputs.buildVersion }} /p:Version=${{ steps.generateVersionStep.outputs.buildVersion }}${{ steps.generateVersionPrefixStep.outputs.buildVersionPrefix }}
+      working-directory: ${{ inputs.sourceDirectoryPath }}
     #- name: Launch unit tests
     #  run: dotnet test --configuration Release --no-build --verbosity normal /p:CollectCoverage=true  /p:CoverletOutputFormat=opencover --collect:"Code Coverage" /p:CoverletOutput="../sonarqubecoverage"
     #  working-directory: src
@@ -69,7 +69,7 @@ jobs:
       run: dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      working-directory: ${{ inputs.sourceDirectryPath }}
+      working-directory: ${{ inputs.sourceDirectoryPath }}
     - uses: actions/upload-artifact@v3
       with:
         name: nuget-artifact
@@ -78,4 +78,4 @@ jobs:
     - name: Push Package to NuGet.org
       if: startswith(github.ref,'refs/heads/feature') || startswith(github.head_ref,'feature/') || inputs.publishToNuget
       run: dotnet nuget push **.nupkg -k ${{ secrets.NUGETAPIKEY }} -s https://api.nuget.org/v3/index.json
-      working-directory: ${{ inputs.sourceDirectryPath }}
+      working-directory: ${{ inputs.sourceDirectoryPath }}
